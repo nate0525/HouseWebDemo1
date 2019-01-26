@@ -1,0 +1,48 @@
+.mytd {
+	border-bottom: 1px solid black;
+}
+
+.mytd2 {
+	border-right: 1px solid black;
+}
+
+.mytd3 {
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+.mytd4 {
+	border-right: 1px solid blue;
+	border-bottom: 1px solid blue;
+}
+
+.mytd5 {
+	border-bottom: 1px solid blue;
+}
+
+.myfoot {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+}
+
+.mya {
+	text-decoration: none
+}
+
+.logodiv {
+	text-align: center;
+	border: 4px solid #ffffff;
+	padding: 10px 25px;
+	border-radius: 25px;
+	-moz-border-radius: 25px; /* 老的 Firefox */
+	color: white;
+	text-decoration: none
+}
+.logindiv {
+	text-align: center;
+	border-radius: 25px;
+	-moz-border-radius: 25px; /* 老的 Firefox */
+	color: white;
+	text-decoration: none
+}

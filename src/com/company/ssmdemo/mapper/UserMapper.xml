@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.ssmdemo.mapper.UserMapper">
+	
+	<select id="loginByUser" resultType="user">
+		SELECT 
+		  `userId`,
+		  `userName`,
+		  `userPassWord`,
+		  `userPhone`,
+		  `userLevel`
+		FROM
+		 `t_user` 
+		 WHERE userName=#{user.userName} AND userPassWord=#{user.userPassWord}
+	</select>
+	
+	<insert id="registerByUser">
+		INSERT INTO `t_user` (
+		  `userId`,
+		  `userName`,
+		  `userPassWord`,
+		  `userPhone`,
+		  `userLevel`
+		) 
+		VALUES
+		  (
+		     #{user.userId},
+		     #{user.userName},
+		     #{user.userPassWord},
+		     #{user.userPhone},
+		     #{user.userLevel}
+		  ) ;
+	</insert>
+	
+	<select id="getMaxId" resultType="int">
+		SELECT MAX(userId)+1 FROM t_user
+	</select>
+	
+	<select id="checkName" resultType="int">
+		SELECT COUNT(1) FROM t_user WHERE username=#{user.userName}
+	</select>
+	
+	<select id="checkPhone" resultType="int">
+		SELECT COUNT(1) FROM t_user WHERE userPhone=#{user.userPhone}
+	</select>
+	
+	<select id="findUserByUserName" resultType="user">
+	SELECT 
+	  `userId`,
+	  `userName`,
+	  `userPassWord`,
+	  `userPhone`,
+	  `userLevel` 
+	FROM
+	 `t_user` 
+	 WHERE userName = #{userName}
+	</select>
+	
+	
+</mapper>

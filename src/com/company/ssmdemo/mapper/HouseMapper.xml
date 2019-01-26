@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.ssmdemo.mapper.HouseMapper">
+
+	<sql id="selectAllOfHouse">
+		`rentalorsale`,
+		`neworold`,
+		`liveorwork`,
+		`gardenName`,
+		`houseCode`,
+		`houseName`,
+		`housePrice`,
+		`houseBig`,
+		`houseInfo`,
+		`publisher`,
+		`houseImg`
+	</sql>
+
+	<sql id="citynameByQueryVo">
+		housesin${queryVo.cityid}
+	</sql>
+
+	<sql id="whereFromAll">
+		<where>
+			<if test="queryVo.house !=null">
+				<if
+					test="queryVo.house.rentalorsale !=null and queryVo.house.rentalorsale != ''">
+					and rentalorsale = #{queryVo.house.rentalorsale}
+				</if>
+				<if test="queryVo.house.neworold !=null and queryVo.house.neworold != ''">
+					and neworold = #{queryVo.house.neworold}
+				</if>
+				<if
+					test="queryVo.house.liveorwork !=null and queryVo.house.liveorwork != ''">
+					and liveorwork = #{queryVo.house.liveorwork}
+				</if>
+				<if
+					test="queryVo.house.gardenName !=null and queryVo.house.gardenName != ''">
+					and gardenName like '%${queryVo.house.gardenName}%'
+				</if>
+				<if
+					test="queryVo.house.houseName !=null and queryVo.house.houseName != ''">
+					and houseName like '%${queryVo.house.houseName}%'
+				</if>
+
+				<!-- 没有价格筛选条件 -->
+				<if test="queryVo.Money1 == 0 and queryVo.Money2 == 0 ">
+					<!-- &lt;=是<= -->
+					<!-- 把月租小于10000的分为月租房的一类 (10000￥以下/月) -->
+					<if
+						test="queryVo.house.housePrice !=null and queryVo.house.housePrice != '' and queryVo.house.housePrice &lt;= 10000">
+						and housePrice &lt; #{queryVo.house.housePrice}
+					</if>
+					<!-- 把月租大于10000同时小于十万的分为月租房的一类 (10000￥以上/月) -->
+					<if
+						test="queryVo.house.housePrice !=null and queryVo.house.housePrice != '' and queryVo.house.housePrice &gt; 10000 and queryVo.house.housePrice &lt; 100000">
+						and housePrice &gt;= #{queryVo.house.housePrice}-1
+					</if>
+					<!-- 把月租大于等于十万同时小于等于300000的分为销售房的一类(三百万￥以下/一套) -->
+					<if
+						test="queryVo.house.housePrice !=null and queryVo.house.housePrice != '' and queryVo.house.housePrice &gt;= 100000 and queryVo.house.housePrice &lt;= 3000000">
+						and housePrice &lt; #{queryVo.house.housePrice}
+					</if>
+					<!-- 把月租大于300000的分为销售房的一类(三百万￥以上/一套) -->
+					<if
+						test="queryVo.house.housePrice !=null and queryVo.house.housePrice != '' and queryVo.house.housePrice &gt; 3000000">
+						and housePrice &gt;= #{queryVo.house.housePrice}-1
+					</if>
+				</if>
+				<!-- 有两个价格筛选条件 -->
+				<if test="queryVo.Money1 != 0 and queryVo.Money2 != 0 ">
+					and housePrice &gt;= #{queryVo.Money1} and housePrice
+					&lt;= #{queryVo.Money2}
+				</if>
+				<!-- 有一个价格筛选条件 -->
+				<if test="queryVo.Money1 != 0 and queryVo.Money2 == 0 ">
+					and housePrice &gt;= #{queryVo.Money1}
+				</if>
+				<!-- 有一个价格筛选条件 -->
+				<if test="queryVo.Money1 == 0 and queryVo.Money2 != 0 ">
+					and housePrice &lt;= #{queryVo.Money2}
+				</if>
+
+				<!-- 没有房屋面积筛选条件 -->
+				<if test="queryVo.Big1 == 0 and queryVo.Big2 == 0 ">
+					<!-- 把房子面积小于等于200的分为一类 (200m²以下) -->
+					<if
+						test="queryVo.house.houseBig !=null and queryVo.house.houseBig != '' and queryVo.house.houseBig &lt;= 200">
+						and houseBig &lt; #{queryVo.house.houseBig}
+					</if>
+					<!-- 把房子面积大于200的分为一类(200m²以上) -->
+					<if
+						test="queryVo.house.houseBig !=null and queryVo.house.houseBig != '' and queryVo.house.houseBig &gt; 200">
+						and houseBig &gt;= #{queryVo.house.houseBig}-1
+					</if>
+				</if>
+				<!-- 有两个房屋面积筛选条件 -->
+				<if test="queryVo.Big1 != 0 and queryVo.Big2 != 0 ">
+					and houseBig &gt;= #{queryVo.Big1} and housePrice &lt;=
+					#{queryVo.Big2}
+				</if>
+				<!-- 有一个房屋面积筛选条件 -->
+				<if test="queryVo.Big1 != 0 and queryVo.Big2 == 0 ">
+					and houseBig &gt;= #{queryVo.Big1}
+				</if>
+				<!-- 有一个房屋面积筛选条件 -->
+				<if test="queryVo.Big1 == 0 and queryVo.Big2 != 0 ">
+					and houseBig &lt;= #{queryVo.Big2}
+				</if>
+
+				<if
+					test="queryVo.house.houseInfo !=null and queryVo.house.houseInfo != ''">
+					and houseInfo like '%${queryVo.house.houseInfo}%'
+				</if>
+				<if
+					test="queryVo.house.publisher !=null and queryVo.house.publisher != ''">
+					and UPPER(publisher) = UPPER('${queryVo.house.publisher}')
+				</if>
+			</if>
+		</where>
+	</sql>
+
+	<select id="getAllHouseByCityOfPage" resultType="House">
+
+		SELECT
+		<include refid="selectAllOfHouse" />
+		FROM
+		<include refid="citynameByQueryVo" />
+		<include refid="whereFromAll" />
+		<!-- 如果 queryVo.house不是空的话 -->
+		<if test="queryVo.house !=null">
+			<if
+				test="queryVo.Money1 != 0 or queryVo.Money2 != 0 or queryVo.house.housePrice != 0 ">
+				ORDER BY housePrice DESC
+			</if>
+			<if
+				test="queryVo.Money1 == 0 and queryVo.Money2 == 0 and queryVo.house.housePrice == 0">
+				ORDER BY houseCode DESC
+			</if>
+		</if>
+		<if test="queryVo.house ==null">
+			ORDER BY houseCode DESC
+		</if>
+		LIMIT
+		#{queryVo.start},#{queryVo.rows}
+
+	</select>
+
+	<select id="getCountHouseByCity" resultType="int">
+
+		SELECT COUNT(1)
+		FROM
+		<include refid="citynameByQueryVo" />
+		<include refid="whereFromAll" />
+	</select>
+
+	<select id="findHouseByHouseCode" resultType="House">
+		SELECT
+		<include refid="selectAllOfHouse" />
+		FROM
+		<include refid="citynameByQueryVo" />
+		<where>
+			<if
+				test="queryVo.house.houseCode != null and queryVo.house.houseCode !=''">
+				and houseCode=#{queryVo.house.houseCode}
+			</if>
+		</where>
+	</select>
+
+	<select id="getHouseByRandom" resultType="House">
+		SELECT
+		<include refid="selectAllOfHouse" />
+		FROM
+		<include refid="citynameByQueryVo" />
+		ORDER BY RAND() LIMIT #{rows}
+	</select>
+
+	<delete id="delete">
+		DELETE
+		FROM
+		<include refid="citynameByQueryVo" />
+		WHERE `houseCode` = #{queryVo.house.houseCode} ;
+	</delete>
+
+	<update id="updateHouse">
+
+		UPDATE
+		housesin${queryVo.cityid}
+		SET
+
+		<if test="queryVo.house !=null">
+			<if
+				test="queryVo.house.rentalorsale !=null and queryVo.house.rentalorsale != ''">
+				rentalorsale = #{queryVo.house.rentalorsale},
+			</if>
+			<if test="queryVo.house.neworold !=null and queryVo.house.neworold != ''">
+				neworold = #{queryVo.house.neworold},
+			</if>
+			<if
+				test="queryVo.house.liveorwork !=null and queryVo.house.liveorwork != ''">
+				liveorwork = #{queryVo.house.liveorwork},
+			</if>
+			<if
+				test="queryVo.house.gardenName !=null and queryVo.house.gardenName != ''">
+				gardenName = #{queryVo.house.gardenName},
+			</if>
+			<if
+				test="queryVo.house.houseCode !=null and queryVo.house.houseCode != ''">
+				houseCode = #{queryVo.house.houseCode},
+			</if>
+			<if
+				test="queryVo.house.houseName !=null and queryVo.house.houseName != ''">
+				houseName = #{queryVo.house.houseName},
+			</if>
+
+			<if test="queryVo.house.housePrice &gt;= 0">
+				housePrice = #{queryVo.house.housePrice},
+			</if>
+			<if test="queryVo.house.houseBig &gt;= 0">
+				houseBig = #{queryVo.house.houseBig},
+			</if>
+			<if
+				test="queryVo.house.houseInfo !=null and queryVo.house.houseInfo != ''">
+				houseInfo = #{queryVo.house.houseInfo},
+			</if>
+			<if
+				test="queryVo.house.publisher !=null and queryVo.house.publisher != ''">
+				publisher = #{queryVo.house.publisher},
+			</if>
+			<if test="queryVo.house.houseImg !=null">
+				houseImg = #{queryVo.house.houseImg}
+			</if>
+		</if>
+
+		WHERE `houseCode` = #{queryVo.house.houseCode}
+
+	</update>
+
+	<select id="getMaxCode" resultType="int" parameterType="String">
+		SELECT
+		MAX(houseCode)+1 FROM housesin${cityid}
+	</select>
+
+	<insert id="insertHouse">
+		INSERT INTO housesin${queryVo.cityid}
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="queryVo.house.rentalorsale != null">
+				rentalorsale,
+			</if>
+			<if test="queryVo.house.neworold != null">
+				neworold,
+			</if>
+			<if test="queryVo.house.liveorwork != null">
+				liveorwork,
+			</if>
+			<if test="queryVo.house.gardenName != null">
+				gardenName,
+			</if>
+			<if test="queryVo.house.houseCode != null">
+				houseCode,
+			</if>
+			<if test="queryVo.house.houseName != null">
+				houseName,
+			</if>
+			<if test="queryVo.house.housePrice != null">
+				housePrice,
+			</if>
+			<if test="queryVo.house.houseBig != null">
+				houseBig,
+			</if>
+			<if test="queryVo.house.houseInfo!= null">
+				houseInfo,
+			</if>
+			<if test="queryVo.house.publisher != null">
+				publisher,
+			</if>
+			<if test="queryVo.house.houseImg != null">
+				houseImg
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="queryVo.house.rentalorsale != null">
+				#{queryVo.house.rentalorsale,jdbcType=VARCHAR},
+			</if>
+			<if test="queryVo.house.neworold != null">
+				#{queryVo.house.neworold,jdbcType=VARCHAR},
+			</if>
+			<if test="queryVo.house.liveorwork != null">
+				#{queryVo.house.liveorwork,jdbcType=VARCHAR},
+			</if>
+			<if test="queryVo.house.gardenName != null">
+				#{queryVo.house.gardenName,jdbcType=VARCHAR},
+			</if>
+			<if test="queryVo.house.houseCode != null">
+				#{queryVo.house.houseCode,jdbcType=INTEGER},
+			</if>
+			<if test="queryVo.house.houseName != null">
+				#{queryVo.house.houseName,jdbcType=VARCHAR},
+			</if>
+			<if test="queryVo.house.housePrice != null">
+				#{queryVo.house.housePrice,jdbcType=FLOAT},
+			</if>
+			<if test="queryVo.house.houseBig != null">
+				#{queryVo.house.houseBig,jdbcType=FLOAT},
+			</if>
+			<if test="queryVo.house.houseInfo != null">
+				#{queryVo.house.houseInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="queryVo.house.publisher != null">
+				#{queryVo.house.publisher,jdbcType=VARCHAR},
+			</if>
+			<if test="queryVo.house.houseImg != null">
+				#{queryVo.house.houseImg,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+
+</mapper>
